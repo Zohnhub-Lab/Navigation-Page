@@ -1,0 +1,32 @@
+name: Deploy Site
+
+on:
+  push:
+    branches:
+      - Production
+
+jobs:
+  deploy: 
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4       
+        with:
+         submodules: true               
+         fetch-depth: 0             
+
+      - name: Setup Hugo	        
+        uses: peaceiris/actions-hugo@v2	
+        with:
+          hugo-version: '0.122.0'	
+
+      - name: Build 
+        run: hugo
+
+      - name: Deploy To Zohnhub-Lab
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          external_repository: Zohnhub-Lab/Navigation-Page
+          personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}	  
+          publish_dir: ./public
+          publish_branch: gh-pages
+          full_commit_message: ${{ github.event.head_commit.message }}
